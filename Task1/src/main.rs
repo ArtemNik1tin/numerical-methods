@@ -1,7 +1,9 @@
 mod input;
-mod input_error;
-mod task_info;
+mod test_task;
 
 fn main() {
-    let task_info = input::run_input_loop();
+    let task_info = input::input_loop::run_input_loop();
+    if task_info.task_number == 1 {
+        
+    }
 }

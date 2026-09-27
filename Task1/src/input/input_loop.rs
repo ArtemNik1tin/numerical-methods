@@ -1,7 +1,7 @@
-use crate::input_error::InputError;
-use crate::task_info::TaskInfo;
 use std::error::Error;
 use std::io;
+use crate::input::input_error::InputError;
+use crate::input::task_info::TaskInfo;
 
 pub fn run_input_loop() -> TaskInfo {
     print_invitation();
@@ -10,10 +10,17 @@ pub fn run_input_loop() -> TaskInfo {
     print_method_numbers();
     let method_number = run_method_number_reading_loop();
 
-    println!("Введите начало отрезка (А):");
-    let start_section = run_section_reading_loop();
-    println!("Введите конец отрезка (В):");
-    let end_section = run_section_reading_loop();
+    let (start_section, end_section) = loop {
+        println!("Введите начало отрезка (А):");
+        let start_section = run_section_reading_loop();
+        println!("Введите конец отрезка (В):");
+        let end_section = run_section_reading_loop();
+        if end_section > start_section {
+            break (start_section, end_section);
+        } else {
+            println!("Конец отрезка должен быть больше начала");
+        }
+    };
 
     println!("Введите число разбиений (N):");
     let number_of_partitions = run_number_of_partitions_reading_loop();
@@ -29,7 +36,7 @@ pub fn run_input_loop() -> TaskInfo {
 
 fn run_number_of_partitions_reading_loop() -> usize {
     loop {
-        match read_usize() {
+        match read_number_of_partitions() {
             Ok(number) => break number,
             Err(err) => {
                 print_error_message(err);
@@ -85,6 +92,14 @@ fn read_task_number() -> Result<usize, Box<dyn Error>> {
         return Err(Box::new(InputError::InvalidChoice));
     }
     Ok(task_number)
+}
+
+fn read_number_of_partitions() -> Result<usize, Box<dyn Error>> {
+    let number_of_partitions = read_usize()?;
+    if number_of_partitions == 1 {
+        return Err(Box::new(InputError::InvalidNumberOfPartitions));
+    }
+    Ok(number_of_partitions)
 }
 
 fn read_usize() -> Result<usize, Box<dyn Error>> {

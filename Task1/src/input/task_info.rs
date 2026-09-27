@@ -1,9 +1,9 @@
 pub struct TaskInfo {
-    task_number: usize,
-    method_number: usize,
-    start_section: f64,
-    end_section: f64,
-    number_of_partitions: usize,
+    pub task_number: usize,
+    pub method_number: usize,
+    pub start_section: f64,
+    pub end_section: f64,
+    pub number_of_partitions: usize,
 }
 
 impl TaskInfo {
