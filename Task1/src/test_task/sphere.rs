@@ -1,6 +1,9 @@
 use std::error::Error;
 
-const WATER_DENSITY: f64 = 1000.0; // кг/м³
+use crate::constants::sphere::{
+    DEFAULT_EPSILON as SPHERE_DEFAULT_EPSILON, MAX_DEPTH_FACTOR, SUBMERSION_COEFFICIENT,
+    TABLE_WIDTH, VOLUME_COEFFICIENT, WATER_DENSITY, WOOD_MATERIALS,
+};
 
 pub struct SphereParams {
     pub radius: f64,           // метры
@@ -27,11 +30,12 @@ pub fn find_submersion_depth(
     let rho = params.density;
 
     let f = |d: f64| -> f64 {
-        4.0 * rho * r.powi(3) - WATER_DENSITY * d.powi(2) * (3.0 * r - d)
+        VOLUME_COEFFICIENT * rho * r.powi(3)
+            - WATER_DENSITY * d.powi(2) * (SUBMERSION_COEFFICIENT * r - d)
     };
 
     let a = 0.0;
-    let b = 2.0 * r;
+    let b = MAX_DEPTH_FACTOR * r;
 
     let result = crate::test_task::bisection::bisection(a, b, epsilon, f)?;
 
@@ -54,36 +58,28 @@ pub fn calculate_depth_for_materials(
     Ok(results)
 }
 
+#[allow(dead_code)]
 pub fn get_wood_materials() -> Vec<(String, f64)> {
-    vec![
-        ("Пробка".to_string(), 250.0),
-        ("Бамбук".to_string(), 400.0),
-        ("Сосна (белая)".to_string(), 500.0),
-        ("Кедр".to_string(), 550.0),
-        ("Дуб".to_string(), 700.0),
-        ("Бук".to_string(), 750.0),
-        ("Красное дерево".to_string(), 800.0),
-        ("Тиковое дерево".to_string(), 850.0),
-        ("Парафин".to_string(), 900.0),
-        ("Полиэтилен".to_string(), 920.0),
-        ("Пчелиный воск".to_string(), 950.0),
-    ]
+    WOOD_MATERIALS
+        .iter()
+        .map(|(name, density)| (name.to_string(), *density))
+        .collect()
 }
 
 pub fn print_results_table(results: &[(String, f64, f64, f64, usize)], radius: f64) {
-    println!("\n{}", "=".repeat(80));
+    println!("\n{}", "=".repeat(TABLE_WIDTH));
     println!("ЗАДАЧА О ПОГРУЖЕНИИ ШАРА");
-    println!("{}", "=".repeat(80));
+    println!("{}", "=".repeat(TABLE_WIDTH));
     println!("Радиус шара: {:.2} м", radius);
     println!("Плотность воды: {} кг/м³", WATER_DENSITY);
-    println!("Точность: 1e-6");
+    println!("Точность: {:e}", SPHERE_DEFAULT_EPSILON);
     println!();
 
     println!(
         "{:<20} {:>12} {:>16} {:>12} {:>12}",
         "Материал", "Плотность", "Глубина (м)", "Шаги", "Невязка"
     );
-    println!("{}", "-".repeat(80));
+    println!("{}", "-".repeat(TABLE_WIDTH));
 
     for (name, density, depth, residual, iterations) in results {
         println!(
@@ -96,5 +92,5 @@ pub fn print_results_table(results: &[(String, f64, f64, f64, usize)], radius: f
         );
     }
 
-    println!("{}", "=".repeat(80));
+    println!("{}", "=".repeat(TABLE_WIDTH));
 }

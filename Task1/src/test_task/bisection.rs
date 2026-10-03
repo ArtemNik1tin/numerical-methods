@@ -1,7 +1,9 @@
+use crate::constants::validation::{
+    MAX_ITERATIONS, MIDPOINT_DIVISOR, SIGN_CHANGE_THRESHOLD,
+};
 use crate::test_task::function_utils::{validate_function_value, validate_sign_change};
+use crate::test_task::method_result::MethodResult;
 use std::error::Error;
-
-const MAX_ITERATIONS: usize = 1000;
 
 pub fn bisection(
     a: f64,
@@ -29,51 +31,31 @@ pub fn bisection(
             return Err("Метод бисекции не сошёлся за максимальное число итераций".into());
         }
 
-        let c = (a + b) / 2.0;
+        let c = (a + b) / MIDPOINT_DIVISOR;
         let f_c = f(c);
 
         validate_function_value(f_c)?;
 
-        if f_a * f_c <= 0.0 {
+        if f_a * f_c <= SIGN_CHANGE_THRESHOLD {
             b = c;
         } else {
             a = c;
         }
 
-        if b - a <= 2.0 * epsilon {
+        if b - a <= MIDPOINT_DIVISOR * epsilon {
             break;
         }
     }
 
-    let x = (a + b) / 2.0;
+    let x = (a + b) / MIDPOINT_DIVISOR;
     let last_interval_length = b - a;
 
-    Ok(MethodResult {
-        name: "Метод бисекции",
-        initial_approximation: format!("({}; {})", initial_left, initial_right),
+    Ok(MethodResult::new(
+        "Метод бисекции",
+        format!("({}; {})", initial_left, initial_right),
         iterations,
-        root: x,
-        difference: last_interval_length,
-        residual: f64::abs(f(x)),
-    })
-}
-
-pub struct MethodResult {
-    pub name: &'static str,
-    pub initial_approximation: String,
-    pub iterations: usize,
-    pub root: f64,
-    pub difference: f64,
-    pub residual: f64,
-}
-
-impl MethodResult {
-    pub fn print(&self) {
-        println!("{}", self.name);
-        println!("  Начальное приближение: {}", self.initial_approximation);
-        println!("  Количество шагов: {}", self.iterations);
-        println!("  Приближенный корень: {:.16}", self.root);
-        println!("  |xm - xm-1|: {:e}", self.difference);
-        println!("  Невязка |f(xm)|: {:e}", self.residual);
-    }
+        x,
+        last_interval_length,
+        f64::abs(f(x)),
+    ))
 }

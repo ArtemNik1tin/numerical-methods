@@ -1,0 +1,9 @@
+pub const MIN_PARTITIONS: usize = 2;
+pub const MIN_EPSILON: f64 = 0.0;
+pub const MIN_METHOD_NUMBER: usize = 1;
+pub const MAX_METHOD_NUMBER: usize = 4;
+pub const TASK_TEST: usize = 1;
+pub const TASK_SPHERE: usize = 2;
+pub const MAX_ITERATIONS: usize = 1000;
+pub const SIGN_CHANGE_THRESHOLD: f64 = 0.0;
+pub const MIDPOINT_DIVISOR: f64 = 2.0;

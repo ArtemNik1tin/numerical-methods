@@ -1,13 +1,13 @@
+use crate::constants::validation::MAX_ITERATIONS;
+use crate::test_task::method_result::MethodResult;
 use std::error::Error;
-
-const MAX_ITERATIONS: usize = 1000;
 
 pub fn newton(
     x0: f64,
     epsilon: f64,
     f: impl Fn(f64) -> f64,
     df: impl Fn(f64) -> f64,
-) -> Result<crate::test_task::bisection::MethodResult, Box<dyn Error>> {
+) -> Result<MethodResult, Box<dyn Error>> {
     let mut x_prev = x0;
     let mut iterations = 0;
 
@@ -28,14 +28,14 @@ pub fn newton(
 
         if (x_next - x_prev).abs() <= epsilon {
             let residual = f64::abs(f(x_next));
-            return Ok(crate::test_task::bisection::MethodResult {
-                name: "Метод Ньютона",
-                initial_approximation: format!("{:.6}", x0),
+            return Ok(MethodResult::new(
+                "Метод Ньютона",
+                format!("{:.6}", x0),
                 iterations,
-                root: x_next,
-                difference: (x_next - x_prev).abs(),
+                x_next,
+                (x_next - x_prev).abs(),
                 residual,
-            });
+            ));
         }
 
         x_prev = x_next;
@@ -47,7 +47,7 @@ pub fn modified_newton(
     epsilon: f64,
     f: impl Fn(f64) -> f64,
     df: impl Fn(f64) -> f64,
-) -> Result<crate::test_task::bisection::MethodResult, Box<dyn Error>> {
+) -> Result<MethodResult, Box<dyn Error>> {
     let df_x0 = df(x0);
 
     if df_x0 == 0.0 {
@@ -69,14 +69,14 @@ pub fn modified_newton(
 
         if (x_next - x_prev).abs() <= epsilon {
             let residual = f64::abs(f(x_next));
-            return Ok(crate::test_task::bisection::MethodResult {
-                name: "Модифицированный метод Ньютона",
-                initial_approximation: format!("{:.6}", x0),
+            return Ok(MethodResult::new(
+                "Модифицированный метод Ньютона",
+                format!("{:.6}", x0),
                 iterations,
-                root: x_next,
-                difference: (x_next - x_prev).abs(),
+                x_next,
+                (x_next - x_prev).abs(),
                 residual,
-            });
+            ));
         }
 
         x_prev = x_next;
@@ -88,7 +88,7 @@ pub fn secant(
     x1: f64,
     epsilon: f64,
     f: impl Fn(f64) -> f64,
-) -> Result<crate::test_task::bisection::MethodResult, Box<dyn Error>> {
+) -> Result<MethodResult, Box<dyn Error>> {
     let mut x_prev = x0;
     let mut x_curr = x1;
     let mut iterations = 0;
@@ -103,21 +103,21 @@ pub fn secant(
         let f_curr = f(x_curr);
 
         if f_curr == f_prev {
-            return Err("Знаменатель равен нулю. Метод секущих неприменим.".into());
+            return Err("Занменатель равен нулю. Метод секущих неприменим.".into());
         }
 
         let x_next = x_curr - f_curr * (x_curr - x_prev) / (f_curr - f_prev);
 
         if (x_next - x_curr).abs() <= epsilon {
             let residual = f64::abs(f(x_next));
-            return Ok(crate::test_task::bisection::MethodResult {
-                name: "Метод секущих",
-                initial_approximation: format!("({:.6}; {:.6})", x0, x1),
+            return Ok(MethodResult::new(
+                "Метод секущих",
+                format!("({:.6}; {:.6})", x0, x1),
                 iterations,
-                root: x_next,
-                difference: (x_next - x_curr).abs(),
+                x_next,
+                (x_next - x_curr).abs(),
                 residual,
-            });
+            ));
         }
 
         x_prev = x_curr;

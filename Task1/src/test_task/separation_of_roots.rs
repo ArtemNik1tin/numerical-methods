@@ -1,3 +1,4 @@
+use crate::constants::validation::{MIN_PARTITIONS, SIGN_CHANGE_THRESHOLD};
 use crate::test_task::test_task_error::TestTaskError;
 use crate::test_task::function_utils::validate_function_value;
 use std::error::Error;
@@ -25,7 +26,7 @@ pub fn find_number_of_segments_with_sign_change(
         let y2 = f(x2);
         validate_function_value(y2)?;
 
-        if y1 * y2 <= 0.0 {
+        if y1 * y2 <= SIGN_CHANGE_THRESHOLD {
             counter += 1;
             segments.push((x1, x2));
         }
@@ -45,7 +46,7 @@ fn validate_section(start: f64, end: f64) -> Result<(), Box<dyn Error>> {
 }
 
 fn validate_number_of_partitions(n: usize) -> Result<(), Box<dyn Error>> {
-    if n < 2 {
+    if n < MIN_PARTITIONS {
         return Err(Box::new(TestTaskError::InvalidNumberOfPartitions));
     }
     Ok(())
