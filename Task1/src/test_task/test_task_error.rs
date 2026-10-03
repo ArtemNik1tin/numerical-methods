@@ -1,0 +1,24 @@
+use std::error::Error;
+use std::fmt;
+use std::fmt::Formatter;
+
+#[derive(Debug)]
+pub enum TestTaskError {
+    InvalidSection,
+    InvalidNumberOfPartitions,
+    InvalidStep,
+}
+
+impl fmt::Display for TestTaskError {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        match self {
+            TestTaskError::InvalidSection => write!(f, "Отрезок составлен некорректно"),
+            TestTaskError::InvalidNumberOfPartitions => {
+                write!(f, "Число отрезков разбиения должно быть больше 1")
+            }
+            TestTaskError::InvalidStep => write!(f, "Шаг разбиения некорректен"),
+        }
+    }
+}
+
+impl Error for TestTaskError {}
