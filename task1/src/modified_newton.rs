@@ -35,7 +35,8 @@ pub fn modified_newton(
         if (x_next - x_prev).abs() <= epsilon {
             let residual = f64::abs(f(x_next));
             return Ok(MethodResult {
-                name: "Метод Ньютона",
+                name: "Модифицированный метод Ньютона",
+                initial_guess: x0,
                 iterations,
                 root: x_next,
                 difference: (x_next - x_prev).abs(),

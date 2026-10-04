@@ -41,6 +41,7 @@ pub fn bisection(
 
     Ok(MethodResult {
         name: "Метод бисекции",
+        initial_guess: (a + b) / 2.0,
         iterations,
         root: x,
         difference: last_interval_length,
