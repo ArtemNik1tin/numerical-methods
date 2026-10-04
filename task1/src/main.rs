@@ -1,3 +1,4 @@
+use crate::ball_problem::solve_ball_problem;
 use crate::bisection::*;
 use crate::modified_newton::modified_newton;
 use crate::newton::newton;
@@ -5,6 +6,7 @@ use crate::reading_loops::*;
 use crate::secant::secant;
 use crate::separation_of_roots::*;
 
+mod ball_problem;
 mod bisection;
 mod constants;
 mod method_result;
@@ -22,7 +24,7 @@ fn main() {
         let task_number = run_list_reading_loop(2);
         match task_number {
             1 => solve_test_problem(),
-            2 => todo!(),
+            2 => solve_ball_problem(),
             0 => break,
             _ => println!("Неверный выбор."),
         }

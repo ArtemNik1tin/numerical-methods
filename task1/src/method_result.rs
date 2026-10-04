@@ -1,4 +1,4 @@
-use std::fmt::{Debug, Display};
+use std::fmt::Display;
 
 pub struct MethodResult {
     pub name: &'static str,
