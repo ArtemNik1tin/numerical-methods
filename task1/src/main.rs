@@ -32,13 +32,16 @@ fn main() {
 }
 
 fn solve_test_problem() {
+    let mut interval_len;
+    let mut intervals;
     let (start_section, end_section) = run_section_reading_loop();
+    println!("Введите число разбиений (N):");
+    let number_of_partitions = run_usize_reading_loop();
     let (start_section, end_section) = loop {
-        println!("Введите число разбиений (N):");
-        let number_of_partitions = run_usize_reading_loop();
         let h = (end_section - start_section) / number_of_partitions as f64;
-        let intervals = find_segments_with_sign_change(start_section, end_section, h, constants::f);
+        intervals = find_segments_with_sign_change(start_section, end_section, h, constants::f);
 
+        interval_len = intervals.len();
         for (i, interval) in intervals.iter().enumerate() {
             println!("{}. [{}, {}]", i + 1, interval.0, interval.1);
         }
@@ -48,9 +51,9 @@ fn solve_test_problem() {
         let choice = run_list_reading_loop(2);
         match choice {
             1 => {
-                println!("Выберете интервал:");
+                println!("Выберите интервал:");
                 let num = run_list_reading_loop(intervals.len());
-                break intervals[num - 1];
+                break intervals[num - 1]
             }
             2 => {
                 continue;
@@ -85,5 +88,55 @@ fn solve_test_problem() {
 
     for result in results {
         println!("{result}");
+    }
+
+    loop {
+        for (i, interval) in intervals.iter().enumerate() {
+            println!("{}. [{}, {}]", i + 1, interval.0, interval.1);
+        }
+
+        println!("Вернутся в главное меню или выбрать другой отрезок?");
+        println!("1. Другой отрезок");
+        println!("2. Главное меню");
+        let chose = run_list_reading_loop(2);
+        match chose {  
+            1 => {
+                println!("Выберите интервал:");
+                let num = run_list_reading_loop(interval_len);
+                let (start_section, end_section) = intervals[num - 1];
+                let epsilon = run_epsilon_reading_loop();
+                let x0 = (start_section + end_section) / 2.0;
+
+                let mut results = Vec::new();
+
+                match bisection(start_section, end_section, epsilon, constants::f) {
+                    Ok(result) => results.push(result),
+                    Err(err) => println!("Error: {}", err),
+                }
+                match newton(x0, epsilon, constants::f, constants::df) {
+                    Ok(result) => results.push(result),
+                    Err(err) => println!("Error: {}", err),
+                }
+                match modified_newton(x0, epsilon, constants::f, constants::df) {
+                    Ok(result) => results.push(result),
+                    Err(err) => println!("Error: {}", err),
+                }
+                match secant(start_section, end_section, epsilon, constants::f) {
+                    Ok(result) => results.push(result),
+                    Err(err) => println!("Error: {}", err),
+                }
+
+                for result in results {
+                    println!("{result}");
+                }
+                continue;
+            }
+            2 => {
+                break;
+            }
+            _ => {
+                panic!();
+            }
+        }
     }
 }

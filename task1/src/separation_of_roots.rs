@@ -1,5 +1,3 @@
-use std::error::Error;
-
 pub fn find_segments_with_sign_change(
     start_section: f64,
     end_section: f64,

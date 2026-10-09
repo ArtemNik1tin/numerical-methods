@@ -4,13 +4,13 @@ use crate::constants::MAX_ITERATIONS;
 use crate::method_result::MethodResult;
 
 pub fn bisection(
-    a: f64,
-    b: f64,
+    start: f64,
+    end: f64,
     epsilon: f64,
     f: impl Fn(f64) -> f64,
 ) -> Result<MethodResult, Box<dyn Error>> {
-    let mut a = a;
-    let mut b = b;
+    let mut a = start;
+    let mut b = end;
 
     let f_a = f(a);
 
@@ -41,7 +41,7 @@ pub fn bisection(
 
     Ok(MethodResult {
         name: "Метод бисекции",
-        initial_guess: (a + b) / 2.0,
+        initial_guess: (start + end) / 2.0,
         iterations,
         root: x,
         difference: last_interval_length,

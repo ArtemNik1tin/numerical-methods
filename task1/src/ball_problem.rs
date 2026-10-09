@@ -28,10 +28,10 @@ pub fn solve_ball_problem() {
 
         println!("Введите плотность материала шара (0 < rho < 1, в долях плотности воды):");
         let rho = run_f64_reading_loop();
-        if rho <= 0.0 || rho >= 1.0 {
-            println!("Плотность должна быть в интервале (0, 1).");
-            continue;
-        }
+        // if rho <= 0.0 || rho >= 1.0 {
+        //     println!("Плотность должна быть в интервале (0, 1).");
+        //     continue;
+        // }
 
         let epsilon = run_epsilon_reading_loop();
 
@@ -63,16 +63,20 @@ pub fn solve_ball_problem() {
             Err(err) => println!("Error: {}", err),
         }
 
-        println!("\nРезультаты (r = {} м, rho = {}, epsilon = {}):", r, rho, epsilon);
-        for result in &results {
-            println!("{result}");
-        }
+        println!("\nРезультаты (r = {:.3} м, rho = {}, epsilon = {}):", r, rho, epsilon);
+        // for result in &results {
+        //     println!("{result}");
+        // }
 
         if let Some(best) = results.iter().min_by(|a, b| a.iterations.cmp(&b.iterations)) {
             println!(
                 "\nСамый быстрый метод: {} ({} итераций)",
                 best.name, best.iterations
             );
+            println!(
+                "Глубина погружения: {:.3}",
+                best.root
+            )
         }
 
         println!("\nРешить для новых значений радиуса? (2 — да, 1 — выход):");
